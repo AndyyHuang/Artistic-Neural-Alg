@@ -11,8 +11,8 @@ vgg19 = models.vgg19(weights=models.VGG19_Weights.DEFAULT)
 # Hyper Params
 epochs = 500
 step = 50
-w_c, w_s = 1, 1_000
-content_layer = 4
+w_c, w_s = 1, 1_000_000
+content_layer = 5
 style_layer = 5
 
 # Import images
@@ -21,7 +21,7 @@ input.requires_grad_(True)
 
 # Get model and losses
 model, content_losses, style_losses = create_neural_model(vgg19, content, style)
-print(model)
+model = model.to(device)
 model.eval()
 model.requires_grad_(False)
 optimizer = torch.optim.LBFGS([input])
