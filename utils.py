@@ -1,7 +1,6 @@
 from torchvision import transforms
 from PIL import Image
 import torch.nn as nn
-import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import torch
 
@@ -34,7 +33,9 @@ class Normalize(nn.Module):
     
     def forward(self, input):
         # im: B x C x H x W
-        return (input - torch.tensor([0.485, 0.456, 0.406]).view(1, -1, 1, 1)) / torch.Tensor([0.229, 0.224, 0.225]).view(1, -1, 1, 1)
+        mean = torch.tensor([0.485, 0.456, 0.406]).view(1, -1, 1, 1)
+        std = torch.tensor([0.229, 0.224, 0.225]).view(1, -1, 1, 1)
+        return (input - mean) / std
     
 def gram_matrix(input):
     # a = batch, b = feature maps, c,d = dims of feature map
@@ -48,12 +49,13 @@ def gram_matrix(input):
 def create_neural_model(vgg19, content, style):
     """ Creates model and gets content and style activations for loss calculations.
     """
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     relu_indicies = [1, 6, 11, 20, 29]
     content_losses, style_losses = [], []
     layers = list(vgg19.features.eval().children())
 
     # Initialize new model
-    model = nn.Sequential(Normalize())
+    model = nn.Sequential(Normalize()).to(device)
 
     for i in range(len(layers)):
         # Add in original modules
@@ -84,6 +86,7 @@ def create_neural_model(vgg19, content, style):
     return model, content_losses, style_losses
 
 def import_images(content_path, style_path, height=400):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     content_pil = Image.open(content_path)
     style_pil = Image.open(style_path)
     resized_content = transforms.Resize(height)(content_pil)
@@ -93,7 +96,7 @@ def import_images(content_path, style_path, height=400):
     style = transforms.ToTensor()(resized_style) # Style
     input = torch.rand(content.shape) # Model input
 
-    return content.unsqueeze(0), style.unsqueeze(0), input.unsqueeze(0) # Add batch dim
+    return content.unsqueeze(0).to(device), style.unsqueeze(0).to(device), input.unsqueeze(0).to(device) # Add batch dim
 
 def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer):
     epoch = 0
@@ -124,7 +127,8 @@ def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style
             if epoch + 1 == 1 or epoch + 1 == step:
                 pil_im = transforms.ToPILImage()(input.squeeze(0))
                 pil_im.save(f"output/dancing_picasso_{epoch + 1}.jpg")
-                step *= 2
+                if epoch + 1 == step:
+                    step *= 2
             epoch += 1
 
             return loss
