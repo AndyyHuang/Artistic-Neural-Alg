@@ -1,67 +1,129 @@
-import torchvision.models as models
-import torchvision.utils as tvutils
-import skimage.io as skio
-import numpy as np
-import matplotlib.pyplot as plt
+from torchvision import transforms
+from PIL import Image
 import torch.nn as nn
+import matplotlib.pyplot as plt
+import torch.nn.functional as F
 import torch
 
 class ContentLoss(nn.Module):
-    def __init__(self):
+    """ Calculates content loss of previous layer.
+    """
+    def __init__(self, target):
         super(ContentLoss, self).__init__()
+        self.target = target.detach()
     
-    def forward(self, content, pred_content):
-        return 0.5 * torch.sum(torch.sub(content, pred_content)**2)
+    def forward(self, input):
+        self.loss = F.mse_loss(input, self.target)
+        return input
 
 class StyleLoss(nn.Module):
-    def __init__(self):
+    """ Calculates style loss of previous layer.
+    """
+    def __init__(self, target):
         super(StyleLoss, self).__init__()
+        self.target = gram_matrix(target).detach()
+
+    def forward(self, input):
+        gram = gram_matrix(input)
+        self.loss = F.mse_loss(gram, self.target)
+        return input
     
-    def forward(self, style, pred_style):
-        return 0.5 * torch.sum(torch.sub(style, pred_style)**2)
+class Normalize(nn.Module):
+    def __init__(self):
+        super(Normalize, self).__init__()
     
-class TotalLoss(nn.Module):
-    def __init__(self, w_c, w_s, content_loss_fn, style_loss_fn):
-        super(TotalLoss, self).__init__()
-        self.w_c, self.w_s = w_c, w_s
-        self.content_loss_fn, self.style_loss_fn = content_loss_fn, style_loss_fn
+    def forward(self, input):
+        # im: B x C x H x W
+        return (input - torch.tensor([0.485, 0.456, 0.406]).view(-1, 1, 1)) / torch.Tensor([0.229, 0.224, 0.225]).view(-1, 1, 1)
     
-    def forward(self, content, style, pred_content, pred_style):
-        return self.w_c * self.content_loss_fn(content, pred_content) + self.w_s * self.style_loss_fn(style, pred_style)
-    
-def get_activation(feature_type, feature_maps):
-  # The hook signature
-  def hook(model, input, output):
-    feature_maps[f"{feature_type}"] = output.detach()
-  return hook
-    
-def get_content_and_style(content_im, style_im, vgg19):
-    # Indices for the layers 'conv1_1', 'conv2_1', 'conv3_1', 'conv4_1', and 'conv5_1'.
-    conv_layers = [0, 5, 10, 19, 28]
+def gram_matrix(input):
+    # a = batch, b = feature maps, c,d = dims of feature map
+    b, fms, m, n = input.size()
 
-    vgg19.eval()
-    feature_maps = {}
+    # Resize into vector and compute activations
+    activations = input.view(b * fms, m * n)
+    gram = torch.mm(activations, activations.t())
+    return gram.div(b * fms * m * n)
 
-    # Register hooks for content
-    for i in range(len(conv_layers)):
-        layer = vgg19.features[conv_layers[i]]
-        layer._forward_hooks.clear() # Unregister previous hook
-        # Register new hook
-        layer.register_forward_hook(get_activation(f"content_{i + 1}_1", feature_maps))
+def create_neural_model(vgg19, content, style):
+    """ Creates model and gets content and style activations for loss calculations.
+    """
+    conv_indicies = [0, 5, 10, 19, 28]
+    content_losses, style_losses = [], []
+    layers = list(vgg19.features.eval().children())
 
-    # Forward pass of content
-    with torch.no_grad():
-        vgg19(content_im)
+    # Initialize new model
+    model = nn.Sequential(Normalize())
 
-    # Register hooks for style
-    for i in range(len(conv_layers)):
-        layer = vgg19.features[conv_layers[i]]
-        layer._forward_hooks.clear() # Unregister previous hook
-        # Register new hook
-        layer.register_forward_hook(get_activation(f"style_{i + 1}_1", feature_maps))
+    for i in range(len(layers)):
+        # Add in original modules
+        layer = layers[i]
+        if isinstance(layer, nn.ReLU):
+            model.add_module(f'{i + 1}', nn.ReLU(inplace=False))
+        else:
+            model.add_module(f'{i + 1}', layer)
 
-    # Forward pass of content
-    with torch.no_grad():
-        vgg19(style_im)
+        # Get activations at layers of interest and add losses
+        if i in conv_indicies:
+            content_out = model(content).detach()
+            style_out = model(style).detach()
+            
+            content_loss = ContentLoss(content_out)
+            content_losses.append(content_loss)
+            style_loss = StyleLoss(style_out)
+            style_losses.append(style_loss)
 
-    return feature_maps
+            model.add_module(f"content_loss_{i + 1}_1", content_loss)
+            model.add_module(f"style_loss_{i + 1}_1", style_loss)
+
+        i += 1
+    return model, content_losses, style_losses
+
+def import_images(content_path, style_path, height=400):
+    content_pil = Image.open(content_path)
+    style_pil = Image.open(style_path)
+    resized_content = transforms.Resize(400)(content_pil)
+
+    content = transforms.ToTensor()(resized_content) # Content
+    resized_style = transforms.Resize((content.shape[1], content.shape[2]))(style_pil)
+    style = transforms.ToTensor()(resized_style) # Style
+    input = torch.rand(content.shape) # Model input
+
+    return content.unsqueeze(0), style.unsqueeze(0), input.unsqueeze(0) # Add batch dim
+
+def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer):
+    epoch = 0
+    step = 50
+    while epoch < epochs:
+        def train_loop():
+            nonlocal epoch
+            nonlocal step
+            with torch.no_grad():
+                input.clamp_(0, 1)
+
+            optimizer.zero_grad()
+            model(input)
+
+            total_style_loss = 0
+            content_loss = content_losses[content_layer - 1].loss
+            for style_loss in style_losses[:style_layer]:
+                total_style_loss += 0.2 * style_loss.loss
+
+            # Calculate loss and backprop
+            loss = w_c * content_loss + w_s * total_style_loss
+            loss.backward()
+
+            if epoch % 10 == 0:
+                print(f"[Epoch {epoch}] Total loss: {loss} Content loss: {content_loss} Style loss: {total_style_loss}")
+            
+            # Save results
+            if epoch + 1 == 1 or epoch + 1 == step:
+                pil_im = transforms.ToPILImage()(input.squeeze(0))
+                pil_im.save(f"output/dancing_picasso_{epoch + 1}.jpg")
+                step *= 2
+            epoch += 1
+
+            return loss
+        
+        optimizer.step(train_loop)
+    return input
