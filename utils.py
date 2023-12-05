@@ -34,7 +34,7 @@ class Normalize(nn.Module):
     
     def forward(self, input):
         # im: B x C x H x W
-        return (input - torch.tensor([0.485, 0.456, 0.406]).view(-1, 1, 1)) / torch.Tensor([0.229, 0.224, 0.225]).view(-1, 1, 1)
+        return (input - torch.tensor([0.485, 0.456, 0.406]).view(1, -1, 1, 1)) / torch.Tensor([0.229, 0.224, 0.225]).view(1, -1, 1, 1)
     
 def gram_matrix(input):
     # a = batch, b = feature maps, c,d = dims of feature map
@@ -48,7 +48,7 @@ def gram_matrix(input):
 def create_neural_model(vgg19, content, style):
     """ Creates model and gets content and style activations for loss calculations.
     """
-    conv_indicies = [0, 5, 10, 19, 28]
+    relu_indicies = [1, 6, 11, 20, 29]
     content_losses, style_losses = [], []
     layers = list(vgg19.features.eval().children())
 
@@ -60,11 +60,13 @@ def create_neural_model(vgg19, content, style):
         layer = layers[i]
         if isinstance(layer, nn.ReLU):
             model.add_module(f'{i + 1}', nn.ReLU(inplace=False))
+        elif isinstance(layer, nn.MaxPool2d):
+            model.add_module(f'{i + 1}', nn.AvgPool2d(layer.kernel_size, layer.stride, layer.padding))
         else:
             model.add_module(f'{i + 1}', layer)
 
         # Get activations at layers of interest and add losses
-        if i in conv_indicies:
+        if i in relu_indicies:
             content_out = model(content).detach()
             style_out = model(style).detach()
             
@@ -73,16 +75,18 @@ def create_neural_model(vgg19, content, style):
             style_loss = StyleLoss(style_out)
             style_losses.append(style_loss)
 
-            model.add_module(f"content_loss_{i + 1}_1", content_loss)
-            model.add_module(f"style_loss_{i + 1}_1", style_loss)
+            model.add_module(f"content_{i + 1}", content_loss)
+            model.add_module(f"style_{i + 1}", style_loss)
 
+        if i == 29:
+            break
         i += 1
     return model, content_losses, style_losses
 
 def import_images(content_path, style_path, height=400):
     content_pil = Image.open(content_path)
     style_pil = Image.open(style_path)
-    resized_content = transforms.Resize(400)(content_pil)
+    resized_content = transforms.Resize(height)(content_pil)
 
     content = transforms.ToTensor()(resized_content) # Content
     resized_style = transforms.Resize((content.shape[1], content.shape[2]))(style_pil)
@@ -107,14 +111,14 @@ def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style
             total_style_loss = 0
             content_loss = content_losses[content_layer - 1].loss
             for style_loss in style_losses[:style_layer]:
-                total_style_loss += 0.2 * style_loss.loss
+                total_style_loss += style_loss.loss
 
             # Calculate loss and backprop
             loss = w_c * content_loss + w_s * total_style_loss
             loss.backward()
 
             if epoch % 10 == 0:
-                print(f"[Epoch {epoch}] Total loss: {loss} Content loss: {content_loss} Style loss: {total_style_loss}")
+                print(f"[Epoch {epoch}] Total loss: {loss} Content loss: {w_c * content_loss} Style loss: {w_s * total_style_loss}")
             
             # Save results
             if epoch + 1 == 1 or epoch + 1 == step:

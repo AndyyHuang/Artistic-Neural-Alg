@@ -21,6 +21,7 @@ input.requires_grad_(True)
 
 # Get model and losses
 model, content_losses, style_losses = create_neural_model(vgg19, content, style)
+print(model)
 model.eval()
 model.requires_grad_(False)
 optimizer = torch.optim.LBFGS([input])
