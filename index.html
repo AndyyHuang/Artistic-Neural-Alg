@@ -121,11 +121,61 @@
 
             <h2>Initial Results: Discussion</h2>
             <p>The style seems to be definitely transfering over, however the content and style do not mix very nicely together. 
-                While the background of the content photos seem to adopt the style fairly well, the subjects of the content images seem to struggle mixing with the style. 
+                While the background of the content photos seem to adopt the style fairly decently, the subjects of the content images seem to struggle when it comes to mixing with the style. 
                 The houses and animals adopt the style's color, however not the brush strokes of the style image.
                 Furthermore, in Tuebingen Neckarfront's mixture with Composition VII, artifacts show up for a few frames towards the end of the training process.
                 Perhaps the complexity or chaoticness of the style image or the realism of the content image causes these random spikes in loss. The spikes in loss may be due to exploding gradients. Below are the loss graphs for each of the results above.
             </p>
+            
+            <p>Legend:</p>
+            <ul>
+                <li>Blue = An Orange cat with Der Schrei's Style</li>
+                <li>Red = A Dog with Femme Nue Assise's Style</li>
+                <li>Yellow = A Small Dog with Starry Night's Style</li>
+                <li>Green = Tuebingen Neckarfront With Composition VII's Style</li>
+            </ul>
+
+            <div class="image-container">
+                <div class="graph-box">
+                    <img src="graphs/run1/animal_cl.png" alt="First Image">
+                    <div class="caption">Content Loss Over Time</div>
+                </div>
+
+                <div class="symbol"></div>
+
+                <div class="graph-box">
+                    <img src="graphs/run1/animal_sl.png" alt="Second Image">
+                    <div class="caption">Style Loss Over Time</div>
+                </div>
+
+                <div class="symbol"></div>
+
+                <div class="graph-box">
+                    <img src="graphs/run1/animal_tl.png" alt="Third Image">
+                    <div class="caption">Total Loss Over Time</div>
+                </div>
+            </div>
+
+            <div class="image-container">
+                <div class="graph-box">
+                    <img src="graphs/run1/tuebingen_cl.png" alt="First Image">
+                    <div class="caption">Content Loss Over Time</div>
+                </div>
+
+                <div class="symbol"></div>
+
+                <div class="graph-box">
+                    <img src="graphs/run1/tuebingen_sl.png" alt="Second Image">
+                    <div class="caption">Style Loss Over Time</div>
+                </div>
+
+                <div class="symbol"></div>
+
+                <div class="graph-box">
+                    <img src="graphs/run1/tuebingen_tl.png" alt="Third Image">
+                    <div class="caption">Total Loss Over Time</div>
+                </div>
+            </div>
         </header>
     </article>
 </body>
@@ -143,17 +193,21 @@
         margin: 10px 5px;
     }
     .image-box img {
-        width: auto; /* Adjust this to change image size */
+        width: auto;
         height: 400px;
+    }
+    .graph-box img {
+        width: 800px;
+        height: auto;
     }
     .caption {
         margin-top: 5px;
     }
     .symbol {
-        font-size: 30px; /* Adjust the font size as needed */
-        margin: 0 15px; /* Space around the symbols */
-        line-height: 400px; /* Same as the image height */
+        font-size: 30px;
+        margin: 0 15px;
+        line-height: 400px;
         vertical-align: middle;
-        font-weight: bold; /* Make the symbol bold */
+        font-weight: bold;
     }
 </style>
