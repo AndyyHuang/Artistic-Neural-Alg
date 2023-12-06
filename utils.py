@@ -3,6 +3,8 @@ from PIL import Image
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
+import os
+from torch.utils.tensorboard import SummaryWriter
 
 class ContentLoss(nn.Module):
     """ Calculates content loss of previous layer.
@@ -85,26 +87,12 @@ def create_neural_model(vgg19, content, style):
         i += 1
     return model, content_losses, style_losses
 
-def import_images(content_path, style_path, height=400):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    content_pil = Image.open(content_path)
-    style_pil = Image.open(style_path)
-    resized_content = transforms.Resize(height)(content_pil)
-
-    content = transforms.ToTensor()(resized_content) # Content
-    resized_style = transforms.Resize((content.shape[1], content.shape[2]))(style_pil)
-    style = transforms.ToTensor()(resized_style) # Style
-    input = torch.rand(content.shape) # Model input
-
-    return content.unsqueeze(0).to(device), style.unsqueeze(0).to(device), input.unsqueeze(0).to(device) # Add batch dim
-
-def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer):
+def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer, writer, output_dir_name):
     epoch = 0
-    step = 50
     while epoch < epochs:
         def train_loop():
             nonlocal epoch
-            nonlocal step
+            nonlocal writer
             with torch.no_grad():
                 input.clamp_(0, 1)
 
@@ -120,18 +108,40 @@ def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style
             loss = w_c * content_loss + w_s * total_style_loss
             loss.backward()
 
-            if epoch % 10 == 0:
-                print(f"[Epoch {epoch}] Total loss: {loss} Content loss: {w_c * content_loss} Style loss: {w_s * total_style_loss}")
+            # Log loss
+            if epoch == 0 or (epoch + 1) % 5 == 0:
+                writer.add_scalar('Content Loss', w_c * content_loss, epoch + 1)
+                writer.add_scalar('Style Loss', w_s * total_style_loss, epoch + 1)
+                writer.add_scalar('Total Loss', loss, epoch + 1)
+                print(f"[Epoch {epoch + 1}] Total loss: {loss} Content loss: {w_c * content_loss} Style loss: {w_s * total_style_loss}")
             
             # Save results
-            if epoch + 1 == 1 or epoch + 1 == step:
-                pil_im = transforms.ToPILImage()(input.squeeze(0))
-                pil_im.save(f"output/dancing_picasso_{epoch + 1}.jpg")
-                if epoch + 1 == step:
-                    step *= 2
+            if epoch == 0 or (epoch + 1) % 10 == 0:
+                store_image(f"output/{output_dir_name}/{epoch + 1}.jpg", input)
             epoch += 1
 
             return loss
         
         optimizer.step(train_loop)
     return input
+
+def import_images(content_path, style_path, height=400):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    content_pil = Image.open(content_path)
+    style_pil = Image.open(style_path)
+    resized_content = transforms.Resize(height)(content_pil)
+
+    content = transforms.ToTensor()(resized_content) # Content
+    resized_style = transforms.Resize((content.shape[1], content.shape[2]))(style_pil)
+    style = transforms.ToTensor()(resized_style) # Style
+    input = torch.rand(content.shape) # Model input
+
+    return content.unsqueeze(0).to(device), style.unsqueeze(0).to(device), input.unsqueeze(0).to(device) # Add batch dim
+
+def store_image(path, im):
+    directory_path = os.path.dirname(path)
+    os.makedirs(directory_path, exist_ok=True)
+    pil_im = transforms.ToPILImage()(im.clamp(0, 1).squeeze(0))
+    pil_im.save(path)
+    
+
