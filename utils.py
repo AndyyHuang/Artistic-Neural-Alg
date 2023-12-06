@@ -41,12 +41,11 @@ class Normalize(nn.Module):
     
 def gram_matrix(input):
     # a = batch, b = feature maps, c,d = dims of feature map
-    b, fms, m, n = input.size()
-
-    # Resize into vector and compute activations
-    activations = input.view(b * fms, m * n)
+    _, fms, m, n = input.size()
+    # Resize into vector and compute correlation
+    activations = input.view(fms, m * n)
     gram = torch.mm(activations, activations.t())
-    return gram.div(b * fms * m * n)
+    return gram.div(fms * m * n)
 
 def create_neural_model(vgg19, content, style):
     """ Creates model and gets content and style activations for loss calculations.
@@ -84,10 +83,9 @@ def create_neural_model(vgg19, content, style):
 
         if i == 29:
             break
-        i += 1
     return model, content_losses, style_losses
 
-def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer, writer, output_dir_name):
+def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer, writer, output_dir_name, log=True):
     epoch = 0
     while epoch < epochs:
         def train_loop():
@@ -109,14 +107,14 @@ def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style
             loss.backward()
 
             # Log loss
-            if epoch == 0 or (epoch + 1) % 5 == 0:
+            if log and (epoch == 0 or (epoch + 1) % 5 == 0):
                 writer.add_scalar('Content Loss', w_c * content_loss, epoch + 1)
                 writer.add_scalar('Style Loss', w_s * total_style_loss, epoch + 1)
                 writer.add_scalar('Total Loss', loss, epoch + 1)
                 print(f"[Epoch {epoch + 1}] Total loss: {loss} Content loss: {w_c * content_loss} Style loss: {w_s * total_style_loss}")
             
             # Save results
-            if epoch == 0 or (epoch + 1) % 10 == 0:
+            if log and (epoch == 0 or (epoch + 1) % 10 == 0):
                 store_image(f"output/{output_dir_name}/{epoch + 1}.jpg", input)
             epoch += 1
 
