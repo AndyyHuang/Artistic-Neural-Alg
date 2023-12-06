@@ -30,7 +30,102 @@
                 <li>Content Layer: conv4_1</li>
                 <li>Style Layers: conv1_1, conv2_1, conv3_1, conv4_1, and conv5_1</li>
                 <li>Optimizer: LBFGS</li>
-              </ul>
+                <li>Epochs: 600</li>
+            </ul>
+
+            <p>Below are visualizations of the training process over 600 epochs. Each frame (aside from the first initial frame) is generated every 10 epochs.</p>
+
+            <div class="image-container">
+                <div class="image-box">
+                    <img src="content/orange_cat.jpg" alt="First Image">
+                    <div class="caption">An Orange Cat by Alison Friend</div>
+                </div>
+
+                <div class="symbol">+</div>
+
+                <div class="image-box">
+                    <img src="style/der_schrei.jpg" alt="Second Image">
+                    <div class="caption">Der Schrei by Edvard Munch</div>
+                </div>
+
+                <div class="symbol">=</div>
+
+                <div class="image-box">
+                    <img src="gifs/der_cat_gif.gif" alt="First Image">
+                    <div class="caption">An Orange cat with Der Schrei's Style</div>
+                </div>
+            </div>
+
+            <div class="image-container">
+                <div class="image-box">
+                    <img src="content/dog_with_stick.jpg" alt="First Image">
+                    <div class="caption">A Dog by Alison Friend</div>
+                </div>
+
+                <div class="symbol">+</div>
+
+                <div class="image-box">
+                    <img src="style/femme.jpg" alt="Second Image">
+                    <div class="caption">Femme Nue Assise by Pablo Picasso</div>
+                </div>
+
+                <div class="symbol">=</div>
+
+                <div class="image-box">
+                    <img src="gifs/picasso_dog_gif.gif" alt="Third Image">
+                    <div class="caption">A Dog with Femme Nue Assise's Style</div>
+                </div>
+            </div>
+
+            <div class="image-container">
+                <div class="image-box">
+                    <img src="content/small_dog.jpg" alt="First Image">
+                    <div class="caption">A Small Dog by Alison Friend</div>
+                </div>
+
+                <div class="symbol">+</div>
+
+                <div class="image-box">
+                    <img src="style/starry_night.jpg" alt="Second Image">
+                    <div class="caption">Starry Night by Vincent van Gogh</div>
+                </div>
+
+                <div class="symbol">=</div>
+                
+                <div class="image-box">
+                    <img src="gifs/starry_dog_gif.gif" alt="Third Image">
+                    <div class="caption">A Small Dog with Starry Night's Style</div>
+                </div>
+            </div>
+
+            <div class="image-container">
+                <div class="image-box">
+                    <img src="content/tuebingen.jpg" alt="First Image">
+                    <div class="caption">Tuebingen Neckarfront</div>
+                </div>
+
+                <div class="symbol">+</div>
+
+                <div class="image-box">
+                    <img src="style/composition_7.jpg" alt="Second Image">
+                    <div class="caption">Composition VII by Wassily Kandinsky</div>
+                </div>
+
+                <div class="symbol">=</div>
+
+                <div class="image-box">
+                    <img src="gifs/7_tuebingen.gif" alt="Third Image">
+                    <div class="caption">Tuebingen Neckarfront With Composition VII's Style</div>
+                </div>
+            </div>
+
+            <h2>Initial Results: Discussion</h2>
+            <p>The style seems to be definitely transfering over, however the content and style appear to not be able to mix very nicely together. 
+                The color transfers over, however it appears to be a bit difficult for the neural network to apply the brush strokes on the content itself. 
+                The background of the content photos seem to adopt the style fairly well, however the subjects in the content images seem to struggle mixing with the style.
+                Furthermore, in Tuebingen Neckarfront's mixture with Composition VII, artifacts show up for a few frames towards the end of the training process.
+                Perhaps the complexity or chaoticness of the style image or the realism of the content image causes these random spikes in loss. The spikes in loss may be due to exploding gradients. Below are the loss graphs for each of the results above.
+            </p>
         </header>
     </article>
 </body>
@@ -38,5 +133,27 @@
 
 
 <style>
-
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .image-box {
+        text-align: center;
+        margin: 10px 5px;
+    }
+    .image-box img {
+        width: auto; /* Adjust this to change image size */
+        height: 400px;
+    }
+    .caption {
+        margin-top: 5px;
+    }
+    .symbol {
+        font-size: 30px; /* Adjust the font size as needed */
+        margin: 0 15px; /* Space around the symbols */
+        line-height: 400px; /* Same as the image height */
+        vertical-align: middle;
+        font-weight: bold; /* Make the symbol bold */
+    }
 </style>
