@@ -351,7 +351,7 @@
             </p>
 
             <h2>Input Initialization</h2>
-            <p>In this section, I experimented with changing input initialization to the content image itself as opposed to a random image. This idea arose from the idea that I wanted the network to learn the content easier while maintaining same harsh application of style, thus creating a balanced image. This actually yielded some pleasing results, as the subjects of the image nicely adopted the style without the style being too overpowering.
+            <p>In this section, I experimented with changing input initialization to the content image itself as opposed to a random image. What motivated this idea was that I wanted the network have an easier time learning the content while maintaining the same harsh application of style in the higher convolutional layers, thus creating a balanced image. This actually yielded some pleasing results, as the subjects of the image nicely adopted the style without the style being too overpowering.
                 Although I didn't exhaustively try out every combination of style weights and content layers with this new input method, I found that the results (in the experiement above) from using w_s=1_000_000 and content_layer=conv5_1 was the closest for creating the results that I was looking for.
                 Thus, I used the content image as the input paired along with w_s=1_000_000 and content_layer=conv5_1 to generate the results below.
             </p>
