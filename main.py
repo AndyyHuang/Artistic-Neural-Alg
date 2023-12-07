@@ -29,7 +29,7 @@ model.eval()
 model.requires_grad_(False)
 
 # Logger
-writer = SummaryWriter(f'stats/{output_dir_path}')
+# writer = SummaryWriter(f'stats/{output_dir_path}')
 
 # Save final result
 output = train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer, output_dir_path, writer=None, log=True)
