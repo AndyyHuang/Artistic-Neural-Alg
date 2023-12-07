@@ -10,27 +10,28 @@ print(f"Running on device: {device}")
 # Load VGG19.
 vgg19 = models.vgg19(weights=models.VGG19_Weights.DEFAULT)
 
+# Import images
+content, style, input = import_images("content/dog_with_stick.jpg", "style/femme.jpg")
+output_dir_path = "output_c1/picasso_dog"
+# input = torch.clone(content)
+input.requires_grad_(True)
+optimizer = torch.optim.LBFGS([input])
+
 # Hyper Params
 epochs = 600
-w_c, w_s = 1, 1_000_000
-content_layer = 5
+w_c, w_s = 1, 10000
+content_layer = 1
 style_layer = 5
 
-# Import images
-content, style, input = import_images("content/small_dog.jpg", "style/starry_night.jpg")
-output_dir_name = "test"
-input = torch.clone(content)
-input.requires_grad_(True)
-
 # Get model and losses
+content, style, input = import_images("content/dog_with_stick.jpg", "style/femme.jpg")
 model, content_losses, style_losses = create_neural_model(vgg19, content, style)
 model.eval()
 model.requires_grad_(False)
-optimizer = torch.optim.LBFGS([input])
 
 # Logger
-writer = SummaryWriter(f'stats/run_1/{output_dir_name}')
+# writer = SummaryWriter(f'stats/run_2/{output_dir_name}')
 
 # Save final result
-output = train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer, writer, output_dir_name, log=False)
-store_image(f"output/{output_dir_name}/{epochs}.jpg", output)
+output = train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer, output_dir_path, writer=None, log=True)
+store_image(f"{output_dir_path}/{epochs}.jpg", output)

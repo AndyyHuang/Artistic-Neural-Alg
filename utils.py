@@ -85,7 +85,7 @@ def create_neural_model(vgg19, content, style):
             break
     return model, content_losses, style_losses
 
-def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer, writer, output_dir_name, log=True):
+def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style_losses, content_layer, style_layer, output_dir_path, writer=None, log=True):
     epoch = 0
     while epoch < epochs:
         def train_loop():
@@ -108,14 +108,15 @@ def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style
 
             # Log loss
             if log and (epoch == 0 or (epoch + 1) % 5 == 0):
-                writer.add_scalar('Content Loss', w_c * content_loss, epoch + 1)
-                writer.add_scalar('Style Loss', w_s * total_style_loss, epoch + 1)
-                writer.add_scalar('Total Loss', loss, epoch + 1)
+                if writer != None:
+                    writer.add_scalar('Content Loss', w_c * content_loss, epoch + 1)
+                    writer.add_scalar('Style Loss', w_s * total_style_loss, epoch + 1)
+                    writer.add_scalar('Total Loss', loss, epoch + 1)
                 print(f"[Epoch {epoch + 1}] Total loss: {loss} Content loss: {w_c * content_loss} Style loss: {w_s * total_style_loss}")
             
             # Save results
             if log and (epoch == 0 or (epoch + 1) % 10 == 0):
-                store_image(f"output/{output_dir_name}/{epoch + 1}.jpg", input)
+                store_image(f"{output_dir_path}/{epoch + 1}.jpg", input)
             epoch += 1
 
             return loss
@@ -123,7 +124,7 @@ def train_image(input, model, optimizer, epochs, w_c, w_s, content_losses, style
         optimizer.step(train_loop)
     return input
 
-def import_images(content_path, style_path, height=400):
+def import_images(content_path, style_path, seed=None, height=400):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     content_pil = Image.open(content_path)
     style_pil = Image.open(style_path)
@@ -132,7 +133,11 @@ def import_images(content_path, style_path, height=400):
     content = transforms.ToTensor()(resized_content) # Content
     resized_style = transforms.Resize((content.shape[1], content.shape[2]))(style_pil)
     style = transforms.ToTensor()(resized_style) # Style
-    input = torch.rand(content.shape) # Model input
+
+    if seed != None:
+        input = torch.rand(content.shape, generator=torch.cuda.manual_seed(seed))
+    else:
+        input = torch.rand(content.shape) # Model input
 
     return content.unsqueeze(0).to(device), style.unsqueeze(0).to(device), input.unsqueeze(0).to(device) # Add batch dim
 

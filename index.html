@@ -24,9 +24,9 @@
             <h2> Initial Results </h2>
             <p>For my initial results below, I used the following setup:</p>
             <ul>
-                <li>Input: Randomly Generated Image</li>
+                <li>Input: Randomly Generated Image (unseeded)</li>
                 <li>Content Loss Weight: 1</li>
-                <li>Style Loss Weight: 1,000,000</li>
+                <li>Style Loss Weight: 1_000_000</li>
                 <li>Content Layer: conv4_1</li>
                 <li>Style Layers: conv1_1, conv2_1, conv3_1, conv4_1, and conv5_1</li>
                 <li>Optimizer: LBFGS</li>
@@ -114,23 +114,23 @@
                 <div class="symbol">=</div>
 
                 <div class="image-box">
-                    <img src="gifs/7_tuebingen.gif" alt="Third Image">
+                    <img src="gifs/7_tuebingen_gif.gif" alt="Third Image">
                     <div class="caption">Tuebingen Neckarfront With Composition VII's Style</div>
                 </div>
             </div>
 
             <h2>Initial Results: Discussion</h2>
             <p>The style seems to be definitely transfering over, however the content and style do not mix very nicely together. 
-                While the background of the content photos seem to adopt the style fairly decently, the subjects of the content images seem to struggle when it comes to mixing with the style. 
-                The houses and animals adopt the style's color, however not the brush strokes of the style image.
-                Furthermore, in Tuebingen Neckarfront's mixture with Composition VII, artifacts tend to randomly flicker for a few frames towards the end of the training process.
+                While the background of the content photos seem to adopt the style fairly decently, the main subjects of the content images seem to struggle when it comes to mixing with the style (e.g. animals, buildings). 
+                The houses and animals adopt the style's color, however struggle to adopt the brush strokes of the style image.
+                Furthermore, in Tuebingen Neckarfront's mixture with Composition VII, artifacts tend to randomly flicker for a few frames throughout the training process.
                 Perhaps the complexity or chaoticness of the style image or the realism of the content image causes these random spikes in loss. The spikes in loss may be due to exploding gradients. Below are the loss graphs for each of the results above.
             </p>
             
             <p>Legend:</p>
             <ul>
                 <li>Blue = An Orange cat with Der Schrei's Style</li>
-                <li>Red = A Dog with Femme Nue Assise's Style</li>
+                <li>Pink = A Dog with Femme Nue Assise's Style</li>
                 <li>Yellow = A Small Dog with Starry Night's Style</li>
                 <li>Green = Tuebingen Neckarfront With Composition VII's Style</li>
             </ul>
@@ -176,6 +176,228 @@
                     <div class="caption">Total Loss Over Time</div>
                 </div>
             </div>
+
+            <h2>Varying Content Layer and Style Weight</h2>
+            <p>In efforts to generate an image that evenly captures the style over the entire content image, I explored varying the content layer and style weights. 
+                I hypothesized that using a higher content layer would yield in an image with the style more exaggerated, as there is greater information loss in the higher layers, however the overall shape (high level details) of the subject would still be captured.
+                Furthermore, increasing the style weight would greater penalize the loss, thus the network would try to reduce the loss by increasing the style applied to the overall image.
+                Additionally, I figured this was worth exploring as the authors did not report the effects of varying the content layer. In these tests, I decided to experiment with just the dog portrait with Femme Nue Assise's style.
+            </p>
+
+            <p>For my experiements below, I used the following setup:</p>
+            <ul>
+                <li>Input: Randomly Generated Image (seed = 0)</li>
+                <li>Content Loss Weight: 1</li>
+                <li>Style Loss Weight (w_s): 10_000 | 100_000 | 1_000_000 | 10_000_000 | 100_000_000 </li>
+                <li>Content Layers: conv1_1 | conv2_1 | conv3_1 | conv4_1 | conv5_1</li>
+                <li>Style Layers: conv1_1, conv2_1, conv3_1, conv4_1, and conv5_1</li>
+                <li>Optimizer: LBFGS</li>
+                <li>Epochs: 600</li>
+            </ul>
+
+            <p>Below are results from varying content layers and style weights.</p>
+            
+            <!--w_s = 10_000-->
+            <div class="image-container">
+                <div class="symbol"> w_s = 10_000</div>
+                <div class="image-box">
+                    <img src="output_c1/ws_10000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv1_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c2/ws_10000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv2_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c3/ws_10000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv3_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c4/ws_10000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv4_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c5/ws_10000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+            </div>
+
+            <!--w_s = 100_000-->
+            <div class="image-container">
+                <div class="symbol"> w_s = 100_000</div>
+                <div class="image-box">
+                    <img src="output_c1/ws_100000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv1_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c2/ws_100000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv2_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c3/ws_100000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv3_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c4/ws_100000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv4_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c5/ws_100000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+            </div>
+
+            <!--w_s = 1_000_000-->
+            <div class="image-container">
+                <div class="symbol"> w_s = 1_000_000</div>
+                <div class="image-box">
+                    <img src="output_c1/ws_1000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv1_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c2/ws_1000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv2_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c3/ws_1000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv3_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c4/ws_1000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv4_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c5/ws_1000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+            </div>
+
+            <!--w_s = 10_000_000-->
+            <div class="image-container">
+                <div class="symbol"> w_s = 10_000_000</div>
+                <div class="image-box">
+                    <img src="output_c1/ws_10000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv1_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c2/ws_10000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv2_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c3/ws_10000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv3_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c4/ws_10000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv4_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c5/ws_10000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+            </div>
+
+            <!--w_s = 100_000_000-->
+            <div class="image-container">
+                <div class="symbol"> w_s = 100_000_000</div>
+                <div class="image-box">
+                    <img src="output_c1/ws_100000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv1_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c2/ws_100000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv2_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c3/ws_100000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv3_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c4/ws_100000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv4_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="output_c5/ws_100000000/picasso_dog/600.jpg" alt="First Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+            </div>
+
+            <h2>Varying Content Layer and Style Weight: Discussion</h2>
+            <p>As suspected, images generated with low style weights have a greater emphasis on the content. 
+                On the other hand, images generated with a large style weight create images that reveal the style more prominently.
+                Similarly, content layers follow the same trend; the higher the content layer, the more prominent the style is. My hypothesis seemed to hold, as higher convolutional layers kept the high level details while filtering out the small details.
+                Thus, images generated using the higher convolutional layers still displayed the overall shape of the dog, despite a huge leap in style. From this, I learned that there comes a trade off between style and content when it comes to generating an image that looks nice.
+                Even after this exploration, I was not very satisfied as I was looking for results where the dog would adopt the texture of the style, however remain discernable as a dog. This led me to try different a diffrent input initialization method(see the next section), which yielded the results I was looking for.
+            </p>
+
+            <h2>Input Initialization</h2>
+            <p>In this section, I experimented with changing input initialization to the content image itself as opposed to a random image. This idea arose from the idea that I wanted the network to learn the content easier while maintaining same harsh application of style, thus creating a balanced image. This actually yielded some pleasing results, as the subjects of the image nicely adopted the style without the style being too overpowering.
+                Although I didn't exhaustively try out every combination of style weights and content layers with this new input method, I found that the results (in the experiement above) from using w_s=1_000_000 and content_layer=conv5_1 was the closest for creating the results that I was looking for.
+                Thus, I used the content image as the input paired along with w_s=1_000_000 and content_layer=conv5_1 to generate the results below.
+            </p>
+
+            <p>For my results below, I used the following setup:</p>
+            <ul>
+                <li>Input: The Content Image</li>
+                <li>Content Loss Weight: 1</li>
+                <li>Style Loss Weight (w_s): 1_000_000 </li>
+                <li>Content Layers: conv5_1</li>
+                <li>Style Layers: conv1_1, conv2_1, conv3_1, conv4_1, and conv5_1</li>
+                <li>Optimizer: LBFGS</li>
+                <li>Epochs: 600</li>
+            </ul>
+
+            <!--Input diff -->
+            <div class="image-container">
+                <div class="image-box">
+                    <img src="gifs/der_cat2_gif.gif" alt="First Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="gifs/picasso_dog2_gif.gif" alt="Second Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+
+                <div class="image-box">
+                    <img src="gifs/starry_dog2_gif.gif" alt="Third Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+            </div>
+
+            <div class="image-container">
+                <div class="image-box">
+                    <img src="gifs/7_tuebingen2_gif.gif" alt="First Image">
+                    <div class="caption">conv5_1</div>
+                </div>
+            </div>
+
+            <h2>Input Initialization: Discussion</h2>
+            <p>As you can see the results are much more balanced. The brush/pencil strokes are more prominent in the background and less prominent on the animals/houses, however are still visibly applied to the animals/houses. The training process seemed to be a bit smoother as well, with less flickering in the image.
+                In my opinion, this creates a nicely balanced image, where the subjects in the content are warped from the style, however not too much. Compared to my initial results, this was a huge success. 
+                Something that would be interesting to explore in the future would be to try different w_s and content_layer combinations with this new input method. 
+                This project was really valuable for learning the behavior of different convolutional layers in conjunction with loss functions and input initializations.
+            </p>
         </header>
     </article>
 </body>
@@ -197,7 +419,7 @@
         height: 400px;
     }
     .graph-box img {
-        width: 800px;
+        width: 600px;
         height: auto;
     }
     .caption {
