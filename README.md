@@ -7,16 +7,36 @@ In my implementation, I found that using MSE loss for both the content and style
 
 As for the way I obtained the losses from each layer, I added content and style loss modules after the RELU layer that succeeds each convolutional layer of interest in VGG19 (which was imported with preinitialized weights using pytorch) in order to probe activation losses. It is necessary to put the loss modules after the RELU layer for the gradients to match what was stated in the paper. The convolutional layers of interest in my implementation were conv1_1, conv2_1, conv3_1, conv4_1, and conv5_1. In the paper, the authors used conv4_2 to generate their results. Additionally, I changed all max pool layers inside VGG19 to avg pool as the authors noted that avg pool seemed to work better. After each forward pass, I would calculate the appropriate loss using each module I added to VGG19. The optimizer I used was LBFGS. It is also worth noting that I froze the weights of VGG19 and put the model on eval mode while running gradient descent on the input image (as also mentioned in the paper).
 
-## Initial Results
-For my initial results below, I used the following setup:
-<ul>
-  <li>Input: Randomly Generated Image (unseeded)</li>
-  <li>Content Loss Weight: 1</li>
-  <li>Style Loss Weight: 1_000_000</li>
-  <li>Content Layer: conv4_1</li>
-  <li>Style Layers: conv1_1, conv2_1, conv3_1, conv4_1, and conv5_1</li>
-  <li>Optimizer: LBFGS</li>
-  <li>Epochs: 600</li>
-</ul>
+Below are my best results. For the full report, see index.html.
 
-Below are visualizations of the training process over 600 epochs. Each frame (aside from the first initial frame) is generated every 10 epochs.
+<p align="center">
+  <img alt="" src="content/orange_cat.jpg" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="" src="style/der_schrei.jpg" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="" src=gifs/der_cat2_gif.gif width="30%">
+</p>
+
+<p align="center">
+  <img alt="" src="content/dog_with_stick.jpg" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="" src="style/femme.jpg" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="" src=gifs/picasso_dog2_gif.gif width="30%">
+</p>
+
+<p align="center">
+  <img alt="" src="content/small_dog.jpg" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="" src="style/starry_night.jpg" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="" src=gifs/starry_dog2_gif.gif width="30%">
+</p>
+
+<p align="center">
+  <img alt="" src="content/tuebingen.jpg" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="" src="style/composition_7.jpg" width="30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="" src=gifs/7_tuebingen2_gif.gif width="30%">
+</p>
