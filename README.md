@@ -1,6 +1,6 @@
 # An Implementation of "A Neural Algorithm of Artistic Style" by Leon A. Gatys et al
 
-In this project, I implemented "A Neural Algorithm of Artistic Style" by Leon A. Gatys et al. and explored results generated using different hyper parameter configurations and methods.
+In this project, I implemented "A Neural Algorithm of Artistic Style" by Leon A. Gatys et al. and explored the results from varying hyper parameter configurations and methods.
 
 ## Implementation Details
 In my implementation, I found that using MSE loss for both the content and style yielded the best results. Furthermore, for the style calculation, I normalized the gram matrix by dividing by the number of elements in it before it is passed into MSE. When using the loss functions (SSD) and without Gram matrix normalization (as outlined in the paper), my total loss exploded upwards to the hundred thousands for many iterations and had difficulty converging to a small loss. However, when using MSE for loss and gram matrix normalization, I was able to drive the loss down to <= 1 for all tests. The image seemed to converge around 500-600 training epochs. Another notable difference is that I omitted weights applied to each style loss layer when computing the total loss, as it helped with the issue stated previously. Finally, input normalization is not mentioned in the paper, however I found that adding a normalization layer as the first layer helped.
