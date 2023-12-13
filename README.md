@@ -1,4 +1,4 @@
-# An Implementation of a Neural Algorithm of Artistic Style
+# An Implementation of "A Neural Algorithm of Artistic Style" by Leon A. Gatys et al
 
 In this project, I implemented "A Neural Algorithm of Artistic Style" by Leon A. Gatys et al. and explored results generated using different hyper parameter configurations and methods.
 
