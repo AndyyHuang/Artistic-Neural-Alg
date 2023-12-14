@@ -14,7 +14,7 @@ Below are my best results. For the full report, see index.html.
 &nbsp; &nbsp; &nbsp; &nbsp;
   <img alt="" src="style/der_schrei.jpg" width="30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-  <img alt="" src=gifs/der_cat2_gif.gif width="30%">
+  <img alt="" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/66a0c542-a2ef-426b-8047-56040ee50f23" width="30%">
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@ Below are my best results. For the full report, see index.html.
 &nbsp; &nbsp; &nbsp; &nbsp;
   <img alt="" src="style/femme.jpg" width="30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-  <img alt="" src=gifs/picasso_dog2_gif.gif width="30%">
+  <img alt="" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/c025ea26-5e76-4c57-9cac-fa97f9d97276" width="30%">
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@ Below are my best results. For the full report, see index.html.
 &nbsp; &nbsp; &nbsp; &nbsp;
   <img alt="" src="style/starry_night.jpg" width="30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-  <img alt="" src=gifs/starry_dog2_gif.gif width="30%">
+  <img alt="" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/fae11f65-d092-495f-a0f7-cefd1a087380" width="30%">
 </p>
 
 <p align="center">
@@ -38,5 +38,5 @@ Below are my best results. For the full report, see index.html.
 &nbsp; &nbsp; &nbsp; &nbsp;
   <img alt="" src="style/composition_7.jpg" width="30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-  <img alt="" src=gifs/7_tuebingen2_gif.gif width="30%">
+  <img alt="" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/b9e523c6-d01d-46b1-9746-83a7041f7a2a" width="30%">
 </p>
