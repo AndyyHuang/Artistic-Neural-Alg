@@ -40,3 +40,5 @@ Below are my best results. The gifs visualize the training process over 600 epoc
 &nbsp; &nbsp; &nbsp; &nbsp;
   <img alt="" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/b9e523c6-d01d-46b1-9746-83a7041f7a2a" width="30%">
 </p>
+
+Credits to Alison Friend for the cute animal portraits.
