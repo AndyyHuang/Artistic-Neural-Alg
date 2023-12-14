@@ -7,7 +7,7 @@ In my implementation, I found that using MSE loss for both the content and style
 
 As for the way I obtained the losses from each layer, I added content and style loss modules after the RELU layer that succeeds each convolutional layer of interest in VGG19 (which was imported with preinitialized weights using pytorch) in order to probe activation losses. It is necessary to put the loss modules after the RELU layer for the gradients to match what was stated in the paper. The convolutional layers of interest in my implementation were conv1_1, conv2_1, conv3_1, conv4_1, and conv5_1. In the paper, the authors used conv4_2 to generate their results. Additionally, I changed all max pool layers inside VGG19 to avg pool as the authors noted that avg pool seemed to work better. After each forward pass, I would calculate the appropriate loss using each module I added to VGG19. The optimizer I used was LBFGS. It is also worth noting that I froze the weights of VGG19 and put the model on eval mode while running gradient descent on the input image (as also mentioned in the paper).
 
-Below are my best results. For the full report, see index.html.
+Below are my best results. The gifs visualize the training process over 600 epochs. Each frame (aside from the first initial frame) is generated every 10 epochs. For the full report, see index.html.
 
 <p align="center">
   <img alt="" src="content/orange_cat.jpg" width="30%">
