@@ -1,5 +1,11 @@
 # An Implementation of "A Neural Algorithm of Artistic Style" by Leon A. Gatys et al
 
+<p align="center">
+  <img width="250" alt="Screenshot 2023-12-14 at 8 35 56 PM" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/bf37aed1-294b-4181-a154-9f87379d8039">
+  <img width="250" alt="Screenshot 2023-12-14 at 8 35 56 PM" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/8a557e10-295c-4cd2-a2c7-d71f24158d62">
+  <img width="250" alt="Screenshot 2023-12-14 at 8 35 56 PM" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/6605097b-fd24-4d14-906f-4c5a967328e0">
+</p>
+
 In this project, I implemented "A Neural Algorithm of Artistic Style" by Leon A. Gatys et al. and explored the results from varying hyper parameter configurations and methods.
 
 ## Overview
