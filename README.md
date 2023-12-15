@@ -1,4 +1,4 @@
-# An Implementation of "A Neural Algorithm of Artistic Style" by Leon A. Gatys et al
+# A Neural Algorithm of Artistic Style Implementation
 
 <p align="center">
   <img width="250" alt="Screenshot 2023-12-14 at 8 35 56 PM" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/bf37aed1-294b-4181-a154-9f87379d8039">
