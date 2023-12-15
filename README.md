@@ -6,7 +6,7 @@ In this project, I implemented "A Neural Algorithm of Artistic Style" by Leon A.
 The artistic neural algorithm generates an image by propogating gradients down to the input image. Thus, the input image is learned as opposed to the network's weights by doing a gradient update with respect to the layer activations. Because only the input is trained, the weights of the pretrained model, VGG19, are frozen during training. The loss function is a weighted sum of the content and style losses.
 
 <p align="center">
-  <img alt="" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/c9446b32-cb3a-4e02-aca0-37d28303ccef">
+  <img width="450" alt="Screenshot 2023-12-14 at 8 35 56 PM" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/c9446b32-cb3a-4e02-aca0-37d28303ccef">
 </p>
 
 <p align="center">Gradient of Content Loss</p>
@@ -19,12 +19,12 @@ In my implementation, I mostly followed what was on the original paper, however 
 As for the way I obtained the losses from each layer, I added content and style loss modules after the RELU layer that succeeds each convolutional layer of interest in VGG19 (which was imported with preinitialized weights using pytorch) in order to probe activation losses. It is necessary to put the loss modules after the RELU layer for the loss gradients to match the loss gradients presented in the paper. See the paper for more detail about the equations below.
 
 <p align="center">
-  <img alt="" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/685121e7-94fb-40a8-8d69-ac5e86ddfb7f">
+  <img width="400" alt="Screenshot 2023-12-14 at 8 27 48 PM" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/685121e7-94fb-40a8-8d69-ac5e86ddfb7f">
 </p>
 <p align="center">Gradient of Content Loss</p>
 
 <p align="center">
-  <img alt="" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/e2823678-45e3-4272-9104-91a1a55496f0">
+  <img width="400" alt="Screenshot 2023-12-14 at 8 27 54 PM" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/e2823678-45e3-4272-9104-91a1a55496f0">
 </p>
 <p align="center">Gradient of Style Loss</p>
 
