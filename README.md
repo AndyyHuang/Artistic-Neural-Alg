@@ -15,7 +15,7 @@ The artistic neural algorithm generates an image by propogating gradients down t
   <img width="400" alt="Screenshot 2023-12-14 at 8 35 56 PM" src="https://github.com/AndyyHuang/Artistic-Neural-Alg/assets/76765795/c9446b32-cb3a-4e02-aca0-37d28303ccef">
 </p>
 
-<p align="center">Gradient of Content Loss</p>
+<p align="center">Total Loss</p>
 
 Thus, two forward passes must be done before training to retrieve the style and content components from each of the model's convolutional layers to calculate the loss for the learned image during training.
 
